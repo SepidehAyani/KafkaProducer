@@ -20,7 +20,7 @@
     </repositories>
 
     <dependencies>
-        <!-- kafka dependencies -->
+        <!-- kafka dependencies --->
 
         <dependency>
             <groupId>org.apache.kafka</groupId>
