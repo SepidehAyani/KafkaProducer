@@ -18,11 +18,16 @@
 
 package com.company;
 
+import java.io.File;
+import java.io.FileReader;
+import java.io.IOException;
 import java.util.Properties;
 
+import org.apache.hadoop.yarn.logaggregation.AggregatedLogFormat;
 import org.apache.kafka.clients.producer.KafkaProducer;
 import org.apache.kafka.clients.producer.Producer;
 import org.apache.kafka.clients.producer.ProducerRecord;
+import java.io.BufferedReader;
 
 public class  KafkaProducerTest {
   public static void main(String[] args) {
@@ -36,9 +41,39 @@ public class  KafkaProducerTest {
     props.put("key.serializer", "org.apache.kafka.common.serialization.StringSerializer");
     props.put("value.serializer", "org.apache.kafka.common.serialization.StringSerializer");
     Producer<String, String> producer = new KafkaProducer(props);
-    for (int i = 0; i < 100; i++) {
-      producer.send(new ProducerRecord<String, String> ("my-topic", Integer.toString(i), Integer.toString(i)));
+
+//    for (int i = 0; i < 100; i++) {
+//      producer.send(new ProducerRecord<String, String>("my-topic", Integer.toString(i), Integer.toString(i)));
+//    }
+    LogReader(producer);
+    producer.close();
+  }
+
+  public static void LogReader(Producer<String, String>  producer) {
+
+  try
+
+  {
+    File file = new File("file1");
+    FileReader fileReader = new FileReader(file);
+    BufferedReader bufferedReader = new BufferedReader(fileReader);
+    String line;
+    while ((line = bufferedReader.readLine()) != null) {
+      producer.send(new ProducerRecord<String, String>("my-topic", line, line));
     }
-    producer. close();
+    fileReader.close();
+
+  }
+
+  catch(
+  IOException e
+  )
+
+  {
+    e.printStackTrace();
   }
 }
+
+
+}
+//create another function name as log reader
