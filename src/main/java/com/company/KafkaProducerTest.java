@@ -48,7 +48,10 @@ public class  KafkaProducerTest {
     LogReader(producer);
     producer.close();
   }
-
+  // new function
+  // reads the apache access log file, line by line
+  // send each line as a message (before to the activeMQ broker)
+  // close the file and exit the producer thread
   public static void LogReader(Producer<String, String>  producer) {
 
   try
@@ -76,4 +79,3 @@ public class  KafkaProducerTest {
 
 
 }
-//create another function name as log reader
