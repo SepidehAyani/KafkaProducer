@@ -64,13 +64,12 @@ public class  KafkaProducerTest {
     fileReader.close();
 
   }
-
   catch(
-  IOException e
-  )
+          IOException e
+          )
 
   {
-    e.printStackTrace();
+      e.printStackTrace();
   }
 }
 
