@@ -45,14 +45,15 @@ public class  KafkaProducerTest {
 //    for (int i = 0; i < 100; i++) {
 //      producer.send(new ProducerRecord<String, String>("my-topic", Integer.toString(i), Integer.toString(i)));
 //    }
-    LogReader(producer);
+    logReader(producer);
     producer.close();
   }
-  // new function
-  // reads the apache access log file, line by line
-  // send each line as a message (before to the activeMQ broker)
-  // close the file and exit the producer thread
-  public static void LogReader(Producer<String, String>  producer) {
+  /** new function
+   * reads the apache access log file, line by line
+   * send each line as a message (before to the activeMQ broker)
+   * close the file and exit the producer thread
+   */
+  public static void logReader(Producer<String, String>  producer) {
 
   try
 
