@@ -30,7 +30,7 @@ import org.apache.kafka.clients.producer.ProducerRecord;
 import java.io.BufferedReader;
 
 public class  KafkaProducerTest {
-  public static void main(String[] args) {
+  public static void main(String[] args) throws IOException {
     Properties props = new Properties();
     props.put("bootstrap.servers", "localhost:9092");
     props.put("acks", "all");
@@ -49,9 +49,9 @@ public class  KafkaProducerTest {
    * send each line as a message (before to the activeMQ broker)
    * close the file and exit the producer thread
    */
-  public static void logReader(Producer<String, String>  producer) {
+  public static void logReader(Producer<String, String>  producer) throws IOException {
 
-  try
+      try
 
   {
     File file = new File("file1");
@@ -62,14 +62,15 @@ public class  KafkaProducerTest {
       producer.send(new ProducerRecord<String, String>("my-topic", line, line));
     }
     fileReader.close();
-
   }
+
   catch(
-          IOException e
-          )
+  IOException e
+  )
 
   {
-      e.printStackTrace();
+    e.printStackTrace();
+
   }
 }
 
