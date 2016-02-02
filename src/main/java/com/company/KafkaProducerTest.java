@@ -38,15 +38,10 @@ public class KafkaProducerTest {
     CommandLineParser parser = new DefaultParser();
 
     // parse the command line arguments
-    CommandLine line = parser.parse(options, args);
-    CommandLine commandLine = null;
-    args = commandLine.getArgs();
-    if (args.length == 0) {
-      throw new ParseException("A single input filename is required");
-    }
+    CommandLine commandline = parser.parse(options, args);
 
     Properties props = new Properties();
-    props.put("bootstrap.servers", "localhost:9092");
+    props.put("log4j.appender.KAFKA.BrokerList", "0:localhost:9092");
     props.put("acks", "all");
     props.put("retries", 0);
     props.put("batch.size", 16384);
@@ -60,7 +55,6 @@ public class KafkaProducerTest {
 
 }
 
-
   /**
    * new function
    * reads the apache access log file, line by line
@@ -72,12 +66,12 @@ public class KafkaProducerTest {
 
     try {
 
-      File file = new File("file1");
+      File file = new File("fileName");
       FileReader fileReader = new FileReader(file);
       BufferedReader bufferedReader = new BufferedReader(fileReader);
       String line;
       while ((line = bufferedReader.readLine()) != null) {
-        producer.send(new ProducerRecord<String, String>("my-topic", line, line));
+        producer.send(new ProducerRecord<String, String>("topic", line, line));
 
         fileReader.close();
       }
