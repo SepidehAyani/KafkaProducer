@@ -18,21 +18,29 @@
 
 package com.company;
 
-import java.io.File;
-import java.io.FileReader;
-import java.io.IOException;
+import java.io.*;
 import java.util.Properties;
 
-import org.apache.hadoop.yarn.logaggregation.AggregatedLogFormat;
+import org.apache.commons.cli.*;
 import org.apache.kafka.clients.producer.KafkaProducer;
 import org.apache.kafka.clients.producer.Producer;
 import org.apache.kafka.clients.producer.ProducerRecord;
-import java.io.BufferedReader;
 
-public class  KafkaProducerTest {
-  public static void main(String[] args) {
+public class KafkaProducerTest {
+  public static void main(String[] args) throws Exception {
+
+    Options options = new Options();
+    options.addOption("topic", true, "Configuring the topic");
+    options.addOption("fileName", true, "Configuring the file name");
+    options.addOption("brokerList", true, "Configuring the broker list");
+
+    CommandLineParser parser = new DefaultParser();
+
+    // parse the command line arguments
+    CommandLine commandline = parser.parse(options, args);
+
     Properties props = new Properties();
-    props.put("bootstrap.servers", "localhost:9092");
+    props.put("bootstrap.servers", commandline.getOptionValue("brokerList"));
     props.put("acks", "all");
     props.put("retries", 0);
     props.put("batch.size", 16384);
@@ -41,39 +49,36 @@ public class  KafkaProducerTest {
     props.put("key.serializer", "org.apache.kafka.common.serialization.StringSerializer");
     props.put("value.serializer", "org.apache.kafka.common.serialization.StringSerializer");
     Producer<String, String> producer = new KafkaProducer(props);
-
-//    for (int i = 0; i < 100; i++) {
-//      producer.send(new ProducerRecord<String, String>("my-topic", Integer.toString(i), Integer.toString(i)));
-//    }
-    LogReader(producer);
+    logReader(commandline.getOptionValue("fileName"), commandline.getOptionValue("topic"), producer);
     producer.close();
-  }
 
-  public static void LogReader(Producer<String, String>  producer) {
+}
 
-  try
+  /**
+   * new function
+   * reads the apache access log file, line by line
+   * send each line as a message (before to the activeMQ broker)
+   * close the file and exit the producer thread
+   */
 
-  {
-    File file = new File("file1");
-    FileReader fileReader = new FileReader(file);
-    BufferedReader bufferedReader = new BufferedReader(fileReader);
-    String line;
-    while ((line = bufferedReader.readLine()) != null) {
-      producer.send(new ProducerRecord<String, String>("my-topic", line, line));
+  public static void logReader(String inputFile, String topicName, Producer<String, String> producer) throws IOException {
+
+    try {
+
+      File file = new File(inputFile);
+      FileReader fileReader = new FileReader(file);
+      BufferedReader bufferedReader = new BufferedReader(fileReader);
+      String line;
+      while ((line = bufferedReader.readLine()) != null) {
+        producer.send(new ProducerRecord<String, String>(topicName, line, line));
+
+      }
+      fileReader.close();
+
     }
-    fileReader.close();
+    catch (Exception e) {
+      e.printStackTrace();
 
-  }
-
-  catch(
-  IOException e
-  )
-
-  {
-    e.printStackTrace();
+    }
   }
 }
-
-
-}
-//create another function name as log reader
