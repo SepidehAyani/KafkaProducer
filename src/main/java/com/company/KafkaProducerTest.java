@@ -22,7 +22,6 @@ import java.io.*;
 import java.util.Properties;
 
 import org.apache.commons.cli.*;
-import org.apache.hadoop.yarn.logaggregation.AggregatedLogFormat;
 import org.apache.kafka.clients.producer.KafkaProducer;
 import org.apache.kafka.clients.producer.Producer;
 import org.apache.kafka.clients.producer.ProducerRecord;
@@ -31,9 +30,9 @@ public class KafkaProducerTest {
   public static void main(String[] args) throws Exception {
 
     Options options = new Options();
-    Options topic = options.addOption("topic", true, "Configuring the topic");
-    Options fileName = options.addOption("fileName", true, "Configuring the file name");
-    Options brokerList = options.addOption("brokerList", true, "Configuring the broker list");
+    options.addOption("topic", true, "Configuring the topic");
+    options.addOption("fileName", true, "Configuring the file name");
+    options.addOption("brokerList", true, "Configuring the broker list");
 
     CommandLineParser parser = new DefaultParser();
 
@@ -41,7 +40,7 @@ public class KafkaProducerTest {
     CommandLine commandline = parser.parse(options, args);
 
     Properties props = new Properties();
-    props.put("log4j.appender.KAFKA.BrokerList", "0:localhost:9092");
+    props.put("bootstrap.servers", commandline.getOptionValue("brokerList"));
     props.put("acks", "all");
     props.put("retries", 0);
     props.put("batch.size", 16384);
@@ -50,7 +49,7 @@ public class KafkaProducerTest {
     props.put("key.serializer", "org.apache.kafka.common.serialization.StringSerializer");
     props.put("value.serializer", "org.apache.kafka.common.serialization.StringSerializer");
     Producer<String, String> producer = new KafkaProducer(props);
-    logReader(producer);
+    logReader(commandline.getOptionValue("fileName"), commandline.getOptionValue("topic"), producer);
     producer.close();
 
 }
@@ -62,19 +61,24 @@ public class KafkaProducerTest {
    * close the file and exit the producer thread
    */
 
-  public static void logReader(Producer<String, String> producer) throws IOException {
+  public static void logReader(String inputFile, String topicName, Producer<String, String> producer) throws IOException {
 
     try {
 
-      File file = new File("fileName");
+      File file = new File(inputFile);
       FileReader fileReader = new FileReader(file);
       BufferedReader bufferedReader = new BufferedReader(fileReader);
       String line;
       while ((line = bufferedReader.readLine()) != null) {
-        producer.send(new ProducerRecord<String, String>("topic", line, line));
+        producer.send(new ProducerRecord<String, String>(topicName, line, line));
 
-        fileReader.close();
       }
+      fileReader.close();
+
+    }
+    catch (Exception e) {
+      e.printStackTrace();
+
     }
   }
 }
