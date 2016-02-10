@@ -29,6 +29,10 @@ import org.apache.kafka.clients.producer.ProducerRecord;
 public class KafkaProducerTest {
   public static void main(String[] args) throws Exception {
 
+    //Define properties for how the Producer finds the cluster, serializes
+    //the messages and if appropriate directs the message to a specific
+    //partition.
+
     Options options = new Options();
     options.addOption("topic", true, "Configuring the topic");
     options.addOption("fileName", true, "Configuring the file name");
@@ -38,6 +42,9 @@ public class KafkaProducerTest {
 
     // parse the command line arguments
     CommandLine commandline = parser.parse(options, args);
+    System.out.println("topic = " + commandline.getOptionValue("topic"));
+    System.out.println("filename = " + commandline.getOptionValue("topic"));
+    System.out.println("brokerList = " + commandline.getOptionValue("brokerList"));
 
     Properties props = new Properties();
     props.put("bootstrap.servers", commandline.getOptionValue("brokerList"));
@@ -64,21 +71,18 @@ public class KafkaProducerTest {
   public static void logReader(String inputFile, String topicName, Producer<String, String> producer) throws IOException {
 
     try {
-
       File file = new File(inputFile);
       FileReader fileReader = new FileReader(file);
       BufferedReader bufferedReader = new BufferedReader(fileReader);
       String line;
       while ((line = bufferedReader.readLine()) != null) {
+        System.out.println("line read... " + line);
         producer.send(new ProducerRecord<String, String>(topicName, line, line));
-
       }
       fileReader.close();
-
     }
     catch (Exception e) {
       e.printStackTrace();
-
     }
   }
 }
