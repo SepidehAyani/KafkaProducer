@@ -21,10 +21,11 @@ package com.company;
 import java.io.*;
 import java.util.Properties;
 
-import org.apache.commons.cli.*;
 import org.apache.kafka.clients.producer.KafkaProducer;
 import org.apache.kafka.clients.producer.Producer;
 import org.apache.kafka.clients.producer.ProducerRecord;
+
+import org.apache.commons.cli.*;
 
 public class KafkaProducerTest {
   public static void main(String[] args) throws Exception {
