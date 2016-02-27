@@ -23,7 +23,6 @@ import java.util.Properties;
 
 import org.apache.kafka.clients.producer.KafkaProducer;
 import org.apache.kafka.clients.producer.Producer;
-import org.apache.kafka.clients.producer.ProducerRecord;
 
 import org.apache.commons.cli.*;
 
@@ -71,15 +70,23 @@ public class KafkaProducerTest {
 
   public static void logReader(String inputFile, String topicName, Producer<String, String> producer) throws IOException {
 
-    try {
+    try
+    {
+
       File file = new File(inputFile);
       FileReader fileReader = new FileReader(file);
       BufferedReader bufferedReader = new BufferedReader(fileReader);
-      String line;
-      while ((line = bufferedReader.readLine()) != null) {
-        System.out.println("line read... " + line);
-        producer.send(new ProducerRecord<String, String>(topicName, line, line));
+      String line = bufferedReader.readLine();
+
+      String delims = " - - ";
+      while ( line != null) {
+        String tokens = bufferedReader.readLine();
+        String[] str = tokens.split(delims);
+
+        System.out.println(str[0]);
+        line = bufferedReader.readLine();
       }
+
       fileReader.close();
     }
     catch (Exception e) {
