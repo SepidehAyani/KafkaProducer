@@ -25,6 +25,7 @@ import org.apache.kafka.clients.producer.KafkaProducer;
 import org.apache.kafka.clients.producer.Producer;
 
 import org.apache.commons.cli.*;
+import org.apache.kafka.clients.producer.ProducerRecord;
 
 public class KafkaProducerTest {
   public static void main(String[] args) throws Exception {
@@ -57,9 +58,10 @@ public class KafkaProducerTest {
     props.put("value.serializer", "org.apache.kafka.common.serialization.StringSerializer");
     Producer<String, String> producer = new KafkaProducer(props);
     logReader(commandline.getOptionValue("fileName"), commandline.getOptionValue("topic"), producer);
+
     producer.close();
 
-}
+  }
 
   /**
    * new function
@@ -85,6 +87,10 @@ public class KafkaProducerTest {
 
         System.out.println(str[0]);
         line = bufferedReader.readLine();
+
+        producer.send(new ProducerRecord<String, String>(topicName, str[0],str[0]));
+
+
       }
 
       fileReader.close();
